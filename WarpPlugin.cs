@@ -120,7 +120,6 @@ public class WarpPlugin : BasePlugin, IPluginConfig<WarpConfig>
         var vec = player.PlayerPawn.Value.AbsOrigin;
         var angle = player.PlayerPawn.Value.V_angle;
 
-        Server.PrintToChatAll($"Recording warp location for {player.PlayerName} at {vec} {angle}");
         var tupl = new Tuple<Vector, QAngle>(new Vector(vec.X, vec.Y, vec.Z), new QAngle(angle.X, angle.Y, angle.Z));
         playerWarps[(uint)player.Slot] = tupl;
     }
@@ -142,13 +141,10 @@ public class WarpPlugin : BasePlugin, IPluginConfig<WarpConfig>
             return;
 
         var pawn = player.PlayerPawn.Value;
-        Server.PrintToChatAll($"Warping {player.PlayerName} to {playerWarps[(uint)player.Slot]}");
-
         var pos = playerWarps[(uint)player.Slot].Item1;
         var angle = playerWarps[(uint)player.Slot].Item2;
 
         pawn.Teleport(pos, angle, new Vector(0f, 0f, 0f));
-        //player.Teleport(playerWarps[(uint)player.Slot], QAngle.Zero, new Vector(0f, 0f, 0f));
     }
 
     private bool PaidAction(CCSPlayerController player, int amount, string denyMessage)
