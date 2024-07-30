@@ -15,6 +15,7 @@ public class WarpConfig : BasePluginConfig
 {
     [JsonPropertyName("teleportCost")] public int teleportCost { get; set; } = 1000;
     [JsonPropertyName("warpSetCost")] public int warpSetCost { get; set; } = 400;
+    [JsonPropertyName("warpPersistsBetweenRounds")] public bool warpPersistsBetweenRounds { get; set; } = false;
 }
 
 /*
@@ -43,6 +44,19 @@ public class WarpPlugin : BasePlugin, IPluginConfig<WarpConfig>
     private List<uint> allowedPlayerIndexes = new List<uint>();
     public override void Load(bool hotReload)
     {
+        RegisterEventHandler<EventRoundEnd>((@event, info) =>
+        {
+            if (!Config.warpPersistsBetweenRounds)
+                playerWarps.Clear();
+
+            var players = Utilities.GetPlayers();
+
+            foreach (var p in players)
+                if (allowedPlayerIndexes.Contains((uint)p.Slot))
+                    p.PrintToChat($"Your warp was reset due to round end.");
+
+            return HookResult.Continue;
+        });
     }
     public override void Unload(bool hotReload)
     {
